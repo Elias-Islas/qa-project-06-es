@@ -14,16 +14,17 @@ def post_new_client_kit(kit_body, auth_token):
                          json=kit_body,
                          headers=auth_token)
 
+def get_headers_kits(token):
+    current_headers = data.headers_kits.copy()
+    current_headers["Authorization"] = token
+    return current_headers
 
 response = post_new_user(data.user_body)
 token = "Bearer " + response.json()["authToken"]
 
 print(response.status_code)
 print(token)
-headers_kits = {
-    "Content-Type": "application/json",
-    "Authorization": token
-}
-response2 = post_new_client_kit(data.kit_body, headers_kits)
+
+response2 = post_new_client_kit(data.kit_body, get_headers_kits(token))
 print(response2.status_code)
 print(response2.json())

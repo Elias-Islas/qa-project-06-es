@@ -10,3 +10,8 @@ user_body = {
 kit_body = {
     "name": "Elias"
 }
+
+headers_kits = {
+    "Content-Type": "application/json",
+    "Authorization": "abcd"
+}
