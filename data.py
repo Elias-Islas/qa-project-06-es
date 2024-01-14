@@ -8,7 +8,7 @@ user_body = {
     "address": "123 Elm Street, Hilltop"
 }
 kit_body = {
-    "name": "Elias"
+    "name": "Ensalada"
 }
 
 headers_kits = {
