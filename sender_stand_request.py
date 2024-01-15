@@ -23,13 +23,3 @@ def get_headers_kits(token):
     return current_headers
 
 
-#response = post_new_user(data.user_body)
-#token = "Bearer " + response.json()["authToken"]
-
-#print(response.status_code)
-#print(token)
-#headers_kits = get_headers_kits(token)
-#response2 = post_new_client_kit(data.kit_body, headers_kits)
-#print(response2.status_code)
-#print(response2.json())
-#print(response2.text)
