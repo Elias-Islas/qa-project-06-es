@@ -1,13 +1,13 @@
-import sender_stand_request
+import pytest
 import data
+import sender_stand_request
 
-def get_new_user_token():
+@pytest.fixture(scope="session")
+def session_headers():
     response = sender_stand_request.post_new_user(data.user_body)
-    return response.json()["authToken"]
-
-def get_headers_kits(token):
+    auth_token = response.json()["authToken"]
     current_headers = data.headers_kits.copy()
-    current_headers["Authorization"] = "Bearer " + token
+    current_headers["Authorization"] = "Bearer " + auth_token
     return current_headers
 
 def get_kit_body(name):
@@ -15,70 +15,71 @@ def get_kit_body(name):
     current_body["name"] = name
     return current_body
 
-def positive_assert(name, token):
-    headers_kits = get_headers_kits(token)
-    kit_body = get_kit_body(name)
-    print(headers_kits)
-    print(kit_body)
 
-    kit_response = sender_stand_request.post_new_client_kit(kit_body, headers_kits)
-    assert kit_response.status_code ==201
+def positive_assert(name, headers):
+    kit_body = get_kit_body(name)
+    print(headers["Authorization"])
+    print(kit_body)
+    kit_response = sender_stand_request.post_new_client_kit(kit_body, headers)
+    assert kit_response.status_code == 201
     assert kit_response.json()["name"] == name
 
-def negative_assert_code_400(name, token):
-    headers_kits = get_headers_kits(token)
+def negative_assert_code_400(name, headers):
     kit_body = get_kit_body(name)
-    kit_response = sender_stand_request.post_new_client_kit(kit_body, headers_kits)
+    print(headers["Authorization"])
+    print(kit_body)
+    kit_response = sender_stand_request.post_new_client_kit(kit_body, headers)
     assert kit_response.status_code == 400
 
-def negative_assert_without_name(token):
-    headers_kits = get_headers_kits(token)
+def negative_assert_without_name(headers):
     kit_body = data.kit_body.copy()
     kit_body.pop("name")
-    kit_response = sender_stand_request.post_new_client_kit(kit_body, headers_kits)
+    print(headers["Authorization"])
+    print(kit_body)
+    kit_response = sender_stand_request.post_new_client_kit(kit_body, headers)
     assert kit_response.status_code == 400
 
 
-#Prueba 1. Creación de un nuevo usuario o usuaria
-#El parámetro "firstName" contiene dos caracteres
-def test_create_kit_1_letter_in_name_get_success_response():
-    positive_assert("a", get_new_user_token())
+#prueba 1
+def test_create_kit_1_letter_in_name_get_success_response(session_headers):
+    name = "a"
+    positive_assert(name, session_headers)
 
 #prueba 2
-def test_create_kit_511_letter_in_name_get_success_response():
+def test_create_kit_511_letter_in_name_get_success_response(session_headers):
     name = "AbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdAbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabC"
-    positive_assert(name, get_new_user_token())
+    positive_assert(name, session_headers)
 
-#prueba 3
-def test_create_user_0_letter_in_name_get_error_response():
+# #prueba 3
+def test_create_user_0_letter_in_name_get_error_response(session_headers):
     name = ""
-    negative_assert_code_400(name, get_new_user_token())
-#prueba 4
-def test_create_user_512_letter_in_name_get_error_response():
+    negative_assert_code_400(name, session_headers)
+
+# #prueba 4
+def test_create_user_512_letter_in_name_get_error_response(session_headers):
     name = "AbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdAbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcD"
-    negative_assert_code_400(name, get_new_user_token())
+    negative_assert_code_400(name, session_headers)
+
 #prueba 5
-def test_create_kit_has_special_symbol_in_name_get_success_response():
+def test_create_kit_has_special_symbol_in_name_get_success_response(session_headers):
     name = "\"№%@\","
-    positive_assert(name, get_new_user_token())
+    positive_assert(name, session_headers)
 
 #prueba 6
-def test_create_kit_has_space_in_name_get_success_response():
+def test_create_kit_has_space_in_name_get_success_response(session_headers):
     name = "A Aaa"
-    positive_assert(name, get_new_user_token())
+    positive_assert(name, session_headers)
 
 #prueba 7
-def test_create_kit_has_number_in_name_get_success_response():
+def test_create_kit_has_number_in_name_get_success_response(session_headers):
     name = "123"
-    positive_assert(name, get_new_user_token())
+    positive_assert(name, session_headers)
 
 #prueba 8
-def test_create_user_without_name_get_error_response():
-    negative_assert_without_name(get_new_user_token())
+def test_create_user_without_name_get_error_response(session_headers):
+    negative_assert_without_name(session_headers)
 
 #prueba 9
-def test_create_user_has_number_in_name_get_error_response():
+def test_create_user_has_number_in_name_get_error_response(session_headers):
     name = 123
-    negative_assert_code_400(name, get_new_user_token())
-
-
+    negative_assert_code_400(name, session_headers)
