@@ -42,37 +42,37 @@ def negative_assert_without_name(headers):
 
 #prueba 1
 def test_create_kit_1_letter_in_name_get_success_response(session_headers):
-    name = "a"
+    name = data.name_with_one_letter
     positive_assert(name, session_headers)
 
 #prueba 2
 def test_create_kit_511_letter_in_name_get_success_response(session_headers):
-    name = "AbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdAbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabC"
+    name = data.name_with_511_letters
     positive_assert(name, session_headers)
 
 # #prueba 3
 def test_create_user_0_letter_in_name_get_error_response(session_headers):
-    name = ""
+    name = data.name_with_in_blank
     negative_assert_code_400(name, session_headers)
 
 # #prueba 4
 def test_create_user_512_letter_in_name_get_error_response(session_headers):
-    name = "AbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdAbcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcD"
+    name = data.name_with_512_letters
     negative_assert_code_400(name, session_headers)
 
 #prueba 5
 def test_create_kit_has_special_symbol_in_name_get_success_response(session_headers):
-    name = "\"№%@\","
+    name = data.name_with_special_symbol
     positive_assert(name, session_headers)
 
 #prueba 6
 def test_create_kit_has_space_in_name_get_success_response(session_headers):
-    name = "A Aaa"
+    name = data.name_with_space
     positive_assert(name, session_headers)
 
 #prueba 7
 def test_create_kit_has_number_in_name_get_success_response(session_headers):
-    name = "123"
+    name = data.name_with_number_character
     positive_assert(name, session_headers)
 
 #prueba 8
@@ -81,5 +81,5 @@ def test_create_user_without_name_get_error_response(session_headers):
 
 #prueba 9
 def test_create_user_has_number_in_name_get_error_response(session_headers):
-    name = 123
+    name = data.name_with_numbers
     negative_assert_code_400(name, session_headers)
